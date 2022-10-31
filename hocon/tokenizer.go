@@ -15,17 +15,30 @@ type Tokenizer struct {
 	text       string
 	index      int
 	indexStack *Stack
+	line       int
+	col        int
 }
 
 func NewTokenizer(text string) *Tokenizer {
 	return &Tokenizer{
 		indexStack: NewStack(),
 		text:       text,
+		line:       1,
+		col:        1,
 	}
 }
 
 func (p *Tokenizer) Push() {
+	// fmt.Printf("index: %v\n", p.index)
 	p.indexStack.Push(p.index)
+}
+
+func (p *Tokenizer) IncrementLine() {
+	p.line = p.line + 1
+}
+
+func (p *Tokenizer) GetLine() int {
+	return p.line
 }
 
 func (p *Tokenizer) Pop() {
@@ -75,6 +88,7 @@ func (p *Tokenizer) Take(length int) string {
 
 	str := string(p.text[p.index : p.index+length])
 	p.index += length
+	p.col += length
 	return str
 }
 
@@ -93,11 +107,15 @@ func (p *Tokenizer) TakeOne() byte {
 
 	b := p.text[p.index]
 	p.index += 1
+	p.col += 1
 	return b
 }
 
 func (p *Tokenizer) PullWhitespace() {
 	for !p.EOF() && isWhitespace(p.Peek()) {
+		if IsNewLine(p.Peek()) {
+			p.IncrementLine()
+		}
 		p.TakeOne()
 	}
 }
@@ -129,6 +147,7 @@ func (p *HoconTokenizer) PullRestOfLine() string {
 	for !p.EOF() {
 		c := p.TakeOne()
 		if c == '\n' {
+			p.IncrementLine()
 			break
 		}
 
@@ -240,6 +259,11 @@ func (p *HoconTokenizer) IsComma() bool {
 
 func (p *HoconTokenizer) IsNewline() bool {
 	return p.Matches(`\n`)
+}
+
+func (p *HoconTokenizer) IncrementLine() {
+	p.line = p.line + 1
+	p.col = 1
 }
 
 func (p *HoconTokenizer) IsDot() bool {
@@ -568,4 +592,9 @@ func isWhitespace(c byte) bool {
 		return true
 	}
 	return false
+}
+
+func IsNewLine(c byte) bool {
+	str := string(c)
+	return str == "\n"
 }

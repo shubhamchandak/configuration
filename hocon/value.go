@@ -41,6 +41,25 @@ var (
 type HoconValue struct {
 	values   []HoconElement
 	oldValue *HoconValue
+	pos      *Position
+}
+
+type Position struct {
+	line int
+	col  int
+	len  int
+}
+
+func (p *HoconValue) SetPosition(pos Position) {
+	p.pos = &Position{
+		line: pos.line,
+		col:  pos.col,
+		len:  pos.len,
+	}
+}
+
+func (p *HoconValue) GetPosition() Position {
+	return *p.pos
 }
 
 func NewHoconValue() *HoconValue {

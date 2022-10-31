@@ -138,6 +138,7 @@ func (p *Parser) ParseValue(owner *HoconValue, isEqualPlus bool, currentPath str
 	}
 
 	p.reader.PullWhitespaceAndComments()
+	startIndex := p.reader.col
 	for p.reader.isValue() {
 		t := p.reader.PullValue()
 
@@ -170,6 +171,12 @@ func (p *Parser) ParseValue(owner *HoconValue, isEqualPlus bool, currentPath str
 			p.ParseTrailingWhitespace(owner)
 		}
 	}
+	endIndex := p.reader.col
+	owner.SetPosition(Position{
+		line: p.reader.GetLine(),
+		col:  startIndex,
+		len:  endIndex - startIndex,
+	})
 	p.ignoreComma()
 	p.ignoreNewline()
 }

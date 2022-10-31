@@ -14,6 +14,12 @@ type Config struct {
 	fallback      *Config
 }
 
+type Position struct {
+	line int
+	col  int
+	len  int
+}
+
 func NewConfigFromRoot(root *hocon.HoconRoot) *Config {
 	if root.Value() == nil {
 		panic("The root value cannot be null.")
@@ -84,6 +90,14 @@ func (p *Config) GetNode(path string) *hocon.HoconValue {
 		}
 	}
 	return currentNode
+}
+
+func (p *Config) GetPosition(path string) hocon.Position {
+	obj := p.GetNode(path)
+	if obj == nil {
+		return hocon.Position{}
+	}
+	return obj.GetPosition()
 }
 
 func (p *Config) GetBoolean(path string, defaultVal ...bool) bool {
