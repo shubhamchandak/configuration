@@ -156,11 +156,22 @@ func (p *Parser) ParseValue(owner *HoconValue, isEqualPlus bool, currentPath str
 			}
 			lit := NewHoconLiteral(t.value)
 			owner.AppendValue(lit)
+			owner.SetType(String)
+		case TokenTypeLiteralValueUnquoted:
+			if owner.IsObject() {
+				owner.Clear()
+			}
+			lit := NewHoconLiteral(t.value)
+			owner.AppendValue(lit)
+			if len(owner.GetType()) == 0 {
+				owner.SetType(Unknown)
+			}
 		case TokenTypeObjectStart:
 			p.parseObject(owner, true, currentPath)
 		case TokenTypeArrayStart:
 			arr := p.ParseArray(currentPath)
 			owner.AppendValue(&arr)
+			owner.SetType(Array)
 		case TokenTypeSubstitute:
 			sub := p.ParseSubstitution(t.value, t.isOptional)
 			p.substitutions = append(p.substitutions, sub)
@@ -173,9 +184,9 @@ func (p *Parser) ParseValue(owner *HoconValue, isEqualPlus bool, currentPath str
 	}
 	endIndex := p.reader.col
 	owner.SetPosition(Position{
-		line: p.reader.GetLine(),
-		col:  startIndex,
-		len:  endIndex - startIndex,
+		Line: p.reader.GetLine(),
+		Col:  startIndex,
+		Len:  endIndex - startIndex,
 	})
 	p.ignoreComma()
 	p.ignoreNewline()

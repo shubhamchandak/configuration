@@ -528,7 +528,7 @@ func (p *HoconTokenizer) pullUnquotedText() *Token {
 			panic(err)
 		}
 	}
-	return DefaultToken.LiteralValue(buf.String())
+	return DefaultToken.LiteralValueUnquoted(buf.String())
 }
 
 func (p *HoconTokenizer) isUnquotedText() bool {
