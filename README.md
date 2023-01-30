@@ -1,6 +1,6 @@
 HOCON (Human-Optimized Config Object Notation)
 =====
-[![GoDoc](https://godoc.org/github.com/go-akka/configuration?status.svg)](https://godoc.org/github.com/go-akka/configuration)
+[![GoDoc](https://godoc.org/github.com/tera-insights/go-akka-configuration?status.svg)](https://godoc.org/github.com/tera-insights/go-akka-configuration)
 [HOCON Docs](https://github.com/typesafehub/config/blob/master/HOCON.md).
 
 > Currently, some features are not implemented, the API might be a little changed in the future.
@@ -13,7 +13,7 @@ package main
 
 import (
   "fmt"
-  "github.com/go-akka/configuration"
+  "github.com/tera-insights/go-akka-configuration"
 )
 
 var configText = `
@@ -28,7 +28,7 @@ config {
   one-day = 1day
   array = ["one", "two", "three"] #comment
   bar = "bar"
-  foo = foo.${config.bar} 
+  foo = foo.${config.bar}
   number = 1
   object {
     a = "a"
